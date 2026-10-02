@@ -1,0 +1,29 @@
+# Dataset demonstrativo da Gestao de Projetos Industriais.
+# Formato:
+# TAREFA <rotulo> <duracao_em_dias>
+# ARESTA <origem> <destino>
+# Uma aresta A -> B significa que A deve terminar antes de B comecar.
+
+TAREFA A 2
+TAREFA B 4
+TAREFA C 3
+TAREFA D 5
+TAREFA E 4
+TAREFA F 3
+TAREFA G 2
+TAREFA H 2
+TAREFA I 4
+TAREFA J 2
+
+ARESTA A B
+ARESTA A C
+ARESTA B D
+ARESTA C D
+ARESTA C E
+ARESTA D F
+ARESTA E F
+ARESTA D G
+ARESTA F H
+ARESTA G H
+ARESTA H I
+ARESTA I J

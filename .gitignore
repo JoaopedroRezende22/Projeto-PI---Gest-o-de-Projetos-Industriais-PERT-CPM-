@@ -1,0 +1,9 @@
+programa
+programa.exe
+testes
+testes.exe
+*.o
+*.obj
+*.out
+*.csv
+.vscode/

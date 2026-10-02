@@ -1,0 +1,86 @@
+==============================================
+ FASE I - GESTAO DE PROJETOS INDUSTRIAIS
+==============================================
+Vertices: 10
+Arestas:  12
+Direcionado: sim (DAG)
+
+Lista de adjacencia:
+  A: C, B
+  B: D
+  C: E, D
+  D: G, F
+  E: F
+  F: H
+  G: H
+  H: I
+  I: J
+  J: 
+
+Matriz de adjacencia:
+    A   B   C   D   E   F   G   H   I   J   
+A   0   1   1   0   0   0   0   0   0   0   
+B   0   0   0   1   0   0   0   0   0   0   
+C   0   0   0   1   1   0   0   0   0   0   
+D   0   0   0   0   0   1   1   0   0   0   
+E   0   0   0   0   0   1   0   0   0   0   
+F   0   0   0   0   0   0   0   1   0   0   
+G   0   0   0   0   0   0   0   1   0   0   
+H   0   0   0   0   0   0   0   0   1   0   
+I   0   0   0   0   0   0   0   0   0   1   
+J   0   0   0   0   0   0   0   0   0   0   
+
+BFS a partir de A: A -> C -> B -> E -> D -> F -> G -> H -> I -> J
+Tempo BFS: 0.000 ms
+DFS a partir de A: A -> C -> E -> F -> H -> I -> J -> D -> G -> B
+Tempo DFS: 0.000 ms
+
+Ordenacao topologica - Kahn: A -> C -> B -> E -> D -> G -> F -> H -> I -> J
+Tempo Kahn: 0.000 ms
+Ordenacao topologica - DFS: A -> B -> C -> D -> G -> E -> F -> H -> I -> J
+Tempo Topo-DFS: 0.000 ms
+Possui ciclo? nao
+O DAG e fortemente conexo? nao
+
+Duracoes das tarefas (dias):
+  A: 2
+  B: 4
+  C: 3
+  D: 5
+  E: 4
+  F: 3
+  G: 2
+  H: 2
+  I: 4
+  J: 2
+
+--- Analise do grafo subjacente nao direcionado ---
+Conexo? sim
+
+Vertices de articulacao:
+  H
+  I
+
+Pontes:
+  H -- I
+  I -- J
+
+Verificacao baseada em Euler: condicoes satisfeitas
+  V = 10, E = 12, F = 4
+  V - E + F = 2
+  Observacao: isso verifica condicoes necessarias; nao e um algoritmo completo de planaridade.
+
+Coloracao gulosa (2 cores):
+  A -> cor 1
+  B -> cor 2
+  C -> cor 2
+  D -> cor 1
+  E -> cor 1
+  F -> cor 2
+  G -> cor 2
+  H -> cor 1
+  I -> cor 2
+  J -> cor 1
+Tempo coloracao: 0.000 ms
+
+Observacao: o Caminho Critico, PERT/CPM e a aplicacao da coloracao para alocacao de recursos ficam para a Fase II.
