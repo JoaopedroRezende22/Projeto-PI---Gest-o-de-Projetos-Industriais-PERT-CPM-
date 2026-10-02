@@ -1,0 +1,22 @@
+==============================================
+ BENCHMARK - DATASET 1000
+==============================================
+Arquivo: data/dataset_1000.txt
+Vertices: 1000
+Arestas:  6747
+Repeticoes por algoritmo: 30
+
+--- Lista de adjacencia ---
+BFS: 0.066667 ms (vertices visitados: 1000)
+DFS: 0.033333 ms (vertices visitados: 1000)
+Memoria estrutural estimada: 189872 bytes (185.42 KB)
+
+--- Matriz de adjacencia ---
+BFS: 1.433333 ms (vertices visitados: 1000)
+DFS: 1.333333 ms (vertices visitados: 1000)
+Memoria estimada da matriz: 4000000 bytes (3906.25 KB)
+
+--- Validacao ---
+BFS lista x matriz: OK
+DFS lista x matriz: OK
+Dataset com 1000 vertices: OK
