@@ -4,6 +4,50 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static void testar_representacoes(void) {
+    Grafo g;
+
+    assert(grafo_inicializar(&g, 1));
+
+    assert(grafo_adicionar_aresta(&g, "A", "B"));
+    assert(grafo_adicionar_aresta(&g, "A", "C"));
+    assert(grafo_adicionar_aresta(&g, "B", "D"));
+    assert(grafo_adicionar_aresta(&g, "C", "D"));
+
+    int a = grafo_indice_vertice(&g, "A");
+    int b = grafo_indice_vertice(&g, "B");
+    int c = grafo_indice_vertice(&g, "C");
+    int d = grafo_indice_vertice(&g, "D");
+
+    assert(a >= 0);
+    assert(b >= 0);
+    assert(c >= 0);
+    assert(d >= 0);
+
+    /*
+     * Verifica se as arestas presentes na lista
+     * também estão presentes na matriz.
+     */
+    assert(g.matriz[(size_t)a * g.quantidade_vertices + (size_t)b] == 1);
+    assert(g.matriz[(size_t)a * g.quantidade_vertices + (size_t)c] == 1);
+    assert(g.matriz[(size_t)b * g.quantidade_vertices + (size_t)d] == 1);
+    assert(g.matriz[(size_t)c * g.quantidade_vertices + (size_t)d] == 1);
+
+    /*
+     * Verifica algumas posições que não possuem arestas.
+     */
+    assert(g.matriz[(size_t)b * g.quantidade_vertices + (size_t)a] == 0);
+    assert(g.matriz[(size_t)c * g.quantidade_vertices + (size_t)a] == 0);
+    assert(g.matriz[(size_t)d * g.quantidade_vertices + (size_t)a] == 0);
+
+    /*
+     * Confirma a quantidade total de arestas.
+     */
+    assert(g.quantidade_arestas == 4);
+
+    grafo_liberar(&g);
+}
+
 static void testar_dag(void) {
     Grafo g;
     assert(grafo_inicializar(&g, 1));
@@ -102,10 +146,12 @@ static void testar_conectividade_forte(void) {
 }
 
 int main(void) {
+    testar_representacoes();
     testar_dag();
     testar_ciclo();
     testar_nao_direcionado();
     testar_conectividade_forte();
+
     printf("Todos os testes da Fase I passaram.\n");
     return 0;
 }
