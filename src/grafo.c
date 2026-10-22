@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 static int garantir_capacidade_vertices(Grafo *g) {
     if (g->quantidade_vertices < g->capacidade_vertices) return 1;
@@ -322,6 +323,59 @@ static int dfs_topo(const Grafo *g, size_t u, int *estado, size_t *saida, size_t
     }
     estado[u] = 2;
     saida[(*qtd)++] = u;
+    return 1;
+}
+
+int grafo_tempos_mais_cedo(
+    const Grafo *g,
+    int *inicio_mais_cedo,
+    int *termino_mais_cedo,
+    int *duracao_projeto
+) {
+    if (!g || !inicio_mais_cedo || !termino_mais_cedo || !duracao_projeto) return 0;
+    if (!g->direcionado || g->quantidade_vertices == 0) return 0;
+
+    size_t *ordem = NULL;
+    size_t tamanho = 0;
+
+    /* A ordenacao topologica tambem confirma que o grafo nao tem ciclos. */
+    if (!grafo_ordenacao_topologica_kahn(g, &ordem, &tamanho)) return 0;
+
+    for (size_t i = 0; i < g->quantidade_vertices; ++i) {
+        if (g->vertices[i].duracao < 0) {
+            free(ordem);
+            return 0;
+        }
+        inicio_mais_cedo[i] = 0;
+        termino_mais_cedo[i] = 0;
+    }
+
+    int maior_termino = 0;
+
+    for (size_t i = 0; i < tamanho; ++i) {
+        size_t u = ordem[i];
+        int duracao = g->vertices[u].duracao;
+
+        if (duracao > INT_MAX - inicio_mais_cedo[u]) {
+            free(ordem);
+            return 0;
+        }
+
+        termino_mais_cedo[u] = inicio_mais_cedo[u] + duracao;
+        if (termino_mais_cedo[u] > maior_termino) {
+            maior_termino = termino_mais_cedo[u];
+        }
+
+        for (Adjacente *a = g->vertices[u].lista; a; a = a->proximo) {
+            size_t v = a->destino;
+            if (termino_mais_cedo[u] > inicio_mais_cedo[v]) {
+                inicio_mais_cedo[v] = termino_mais_cedo[u];
+            }
+        }
+    }
+
+    free(ordem);
+    *duracao_projeto = maior_termino;
     return 1;
 }
 

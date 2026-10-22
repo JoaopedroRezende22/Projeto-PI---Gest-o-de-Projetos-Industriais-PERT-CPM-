@@ -108,7 +108,43 @@ int main(void) {
     for (size_t i = 0; i < projeto.quantidade_vertices; ++i) {
         printf("  %s: %d\n", projeto.vertices[i].rotulo, projeto.vertices[i].duracao);
     }
+        /* Fase II - Calculo dos tempos mais cedo no PERT/CPM */
+    size_t n = projeto.quantidade_vertices;
 
+    int *inicio_mais_cedo = malloc(n * sizeof(int));
+    int *termino_mais_cedo = malloc(n * sizeof(int));
+    int duracao_projeto = 0;
+
+    printf("\n--- FASE II: PERT/CPM ---\n");
+
+    if (!inicio_mais_cedo || !termino_mais_cedo) {
+        printf("Erro ao alocar memoria para o PERT/CPM.\n");
+    } else if (grafo_tempos_mais_cedo(
+                   &projeto,
+                   inicio_mais_cedo,
+                   termino_mais_cedo,
+                   &duracao_projeto)) {
+
+        printf("\nTempos mais cedo das tarefas (dias):\n");
+
+        for (size_t i = 0; i < n; ++i) {
+            printf("  Tarefa %s: inicio = %d, termino = %d\n",
+                   projeto.vertices[i].rotulo,
+                   inicio_mais_cedo[i],
+                   termino_mais_cedo[i]);
+        }
+
+        printf("\nDuracao minima do projeto: %d dias\n",
+               duracao_projeto);
+
+    } else {
+        printf("Nao foi possivel calcular os tempos mais cedo. "
+               "Verifique se o grafo e direcionado, possui tarefas "
+               "e nao contem ciclos.\n");
+    }
+
+    free(inicio_mais_cedo);
+    free(termino_mais_cedo);
     /* Para articulacao, pontes, Euler e coloracao, usamos o grafo subjacente
        nao direcionado das dependencias do projeto. */
     Grafo estrutura;
