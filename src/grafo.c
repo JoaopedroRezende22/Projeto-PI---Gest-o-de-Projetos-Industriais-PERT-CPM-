@@ -379,6 +379,138 @@ int grafo_tempos_mais_cedo(
     return 1;
 }
 
+
+int grafo_tempos_mais_tarde(
+    const Grafo *g,
+    int *inicio_mais_tarde,
+    int *termino_mais_tarde,
+    int duracao_projeto
+) {
+    if (!g || !inicio_mais_tarde || !termino_mais_tarde) return 0;
+    if (!g->direcionado || g->quantidade_vertices == 0) return 0;
+    if (duracao_projeto < 0) return 0;
+
+    size_t *ordem = NULL;
+    size_t tamanho = 0;
+
+    /* A ordenacao topologica valida que o grafo nao possui ciclos. */
+    if (!grafo_ordenacao_topologica_kahn(g, &ordem, &tamanho)) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < g->quantidade_vertices; ++i) {
+        if (g->vertices[i].duracao < 0) {
+            free(ordem);
+            return 0;
+        }
+
+        inicio_mais_tarde[i] = 0;
+        termino_mais_tarde[i] = 0;
+    }
+
+    /* Inicialmente, todas as tarefas podem terminar no fim do projeto. */
+    for (size_t i = 0; i < g->quantidade_vertices; ++i) {
+        termino_mais_tarde[i] = duracao_projeto;
+        inicio_mais_tarde[i] =
+            termino_mais_tarde[i] - g->vertices[i].duracao;
+    }
+
+    /* Percorre as tarefas na ordem topologica inversa. */
+    for (size_t i = tamanho; i > 0; --i) {
+        size_t u = ordem[i - 1];
+        int menor_inicio_sucessoras = duracao_projeto;
+        int possui_sucessora = 0;
+
+        for (Adjacente *a = g->vertices[u].lista; a; a = a->proximo) {
+            size_t v = a->destino;
+            possui_sucessora = 1;
+
+            if (inicio_mais_tarde[v] < menor_inicio_sucessoras) {
+                menor_inicio_sucessoras = inicio_mais_tarde[v];
+            }
+        }
+
+        if (possui_sucessora) {
+            termino_mais_tarde[u] = menor_inicio_sucessoras;
+            inicio_mais_tarde[u] =
+                termino_mais_tarde[u] - g->vertices[u].duracao;
+        }
+    }
+
+    free(ordem);
+    return 1;
+}
+
+
+int grafo_calcular_folgas(
+    const Grafo *g,
+    const int *inicio_mais_cedo,
+    const int *inicio_mais_tarde,
+    int **folgas
+) {
+    if (!g || !inicio_mais_cedo || !inicio_mais_tarde || !folgas) {
+        return 0;
+    }
+
+    if (g->quantidade_vertices == 0) {
+        return 0;
+    }
+
+    size_t n = g->quantidade_vertices;
+    int *resultado = malloc(n * sizeof(int));
+
+    if (!resultado) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        resultado[i] = inicio_mais_tarde[i] - inicio_mais_cedo[i];
+
+        if (resultado[i] < 0) {
+            free(resultado);
+            return 0;
+        }
+    }
+
+    *folgas = resultado;
+    return 1;
+}
+
+int grafo_identificar_caminho_critico(
+    const Grafo *g,
+    const int *folgas,
+    int **eh_critica
+) {
+    if (!g || !folgas || !eh_critica) {
+        return 0;
+    }
+
+    if (g->quantidade_vertices == 0) {
+        return 0;
+    }
+
+    size_t n = g->quantidade_vertices;
+
+    int *resultado = malloc(n * sizeof(int));
+
+    if (!resultado) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        if (folgas[i] < 0) {
+            free(resultado);
+            return 0;
+        }
+
+        resultado[i] = (folgas[i] == 0) ? 1 : 0;
+    }
+
+    *eh_critica = resultado;
+
+    return 1;
+}
+
 int grafo_ordenacao_topologica_dfs(const Grafo *g, size_t **ordem, size_t *tamanho) {
     if (!g || !ordem || !tamanho) return 0;
     *ordem = NULL; *tamanho = 0;
